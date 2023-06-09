@@ -147,8 +147,13 @@ detections_2_days %>%
 
 # See a vector of the deployed tags:
 
-deployed_tags$tag_id
+deployed_tags$tag_id %>% 
+  sort()
+
+# When was a given tag last observed?
+
+get_last_observation("1E554B19", time_window = "1 hours")
 
 # Where was a given tag in the last hour?
 
-map_last_hour("1E554B19")
+map_last_time("55526107", time_window = "6 hours")

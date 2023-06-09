@@ -88,10 +88,11 @@ daily_update_theme <-
       strip.background = element_rect(color = "black"))
   }
 
-map_last_hour <-
-  function(tag_id) {
-    
-    last_detection_at_nodes <- 
+
+# when last observed ------------------------------------------------------
+
+get_last_observation <-
+  function(target_tag, time_window = "1 hours") {
       detections %>% 
       
       # Subset to the target tag:
@@ -105,12 +106,28 @@ map_last_hour <-
           max(
             date(time))) %>% 
       
+      # Get last time interval:
+      
+      mutate(
+        time = round_date(time, time_window)) %>% 
+      
       # Grab the last hour of observations:
       
       filter(
-        hour(time) ==
-          max(
-            hour(time))) %>% 
+        time == max(time))
+  }
+
+
+# map last observed -------------------------------------------------------
+
+map_last_time <-
+  function(target_tag, time_window = "1 hours") {
+    
+    last_detection_at_nodes <- 
+      
+      # Get last set of observations in a given time window:
+      
+      get_last_observation(target_tag, time_window) %>% 
       
       # Get the maximum rssi from each node:
       
