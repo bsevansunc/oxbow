@@ -1,0 +1,280 @@
+---
+title: "Tag hunt"
+author: "Brian Evans"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+---
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(
+  warning = FALSE, 
+  message = FALSE) 
+```
+
+```{r, include = FALSE}
+source("scripts/daily_updates/daily_updates_source.R")
+```
+
+<hr>
+
+# Daily overview
+
+```{r, include = FALSE}
+detections_by_day <-
+  detections %>% 
+  mutate(time = as_date(time)) %>% 
+  filter(time != today()) %>% 
+  group_by(
+    time,
+    nest_id,
+    tag_id)
+```
+
+
+## Pings
+
+The number of daily detections:
+
+```{r, echo = FALSE, fig.asp = 1.5}
+detections_by_day %>% 
+  summarize(
+    n_pings = n(),
+    .groups = "drop") %>% 
+  ggplot() +
+  aes(x = time,
+      y = n_pings,
+      color = tag_id) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(
+    ~ nest_id, 
+    scales = "free",
+    ncol = 1) +
+  daily_update_theme()
+```
+
+## Nodes
+
+The number of nodes a tag was detected at per day:
+
+```{r, echo = FALSE, fig.asp = 1.5}
+detections_by_day %>% 
+  summarize(
+    n_nodes = 
+      length(
+        unique(node_id)),
+    .groups = "drop") %>% 
+  ggplot() +
+  aes(x = time,
+      y = n_nodes,
+      color = tag_id) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(
+    ~ nest_id, 
+    scales = "free",
+    ncol = 1) +
+  daily_update_theme()
+```
+
+## Stdev rssi
+
+The average variance, by node, by day:
+
+```{r, echo = FALSE, fig.asp = 1.5}
+detections_by_day %>% 
+  summarize(
+    sd_rssi = 
+      mean(
+        sd(rssi),
+        na.rm = TRUE),
+    .groups = "drop") %>% 
+  ggplot() +
+  aes(x = time,
+      y = sd_rssi,
+      color = tag_id) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(
+    ~ nest_id, 
+    scales = "free",
+    ncol = 1) +
+  daily_update_theme()
+```
+
+<hr>
+
+# The last 2 days, hourly
+
+*Note: To make things easier to interpret, I've subset these records to only observations between sunrise and sunset.*
+
+```{r, include = FALSE}
+
+detections_2_days <- 
+  detections %>% 
+  filter(time > today() - 2,
+         time < today()) %>% 
+  mutate(
+    date = as_date(time),
+    time = round_date(time, "1 hours")) %>% 
+  
+  # Subset to records between dawn and one hour before dusk:
+  
+  left_join(
+    dawn_dusk,
+    by = "date") %>% 
+  select(-date) %>%
+  filter(
+    between(time, dawn, dusk - 3600)) %>% 
+  
+  # Group data for summaries:
+  
+  group_by(
+    time,
+    nest_id,
+    tag_id)
+```
+
+## Pings
+
+The number of hourly detections over the last two days:
+
+```{r, echo = FALSE, fig.asp = 1.5}
+detections_2_days %>% 
+  summarize(
+    n_pings = n(),
+    .groups = "drop") %>% 
+  ggplot() +
+  aes(x = time,
+      y = n_pings,
+      color = tag_id) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(
+    ~ nest_id, 
+    scales = "free",
+    ncol = 1) +
+  daily_update_theme()
+```
+
+## Nodes
+
+The number of nodes that a tag was detected at, per hour, over the last two days:
+
+```{r, echo = FALSE, fig.asp = 1.5}
+detections_2_days %>% 
+  summarize(
+    n_nodes = 
+      length(
+        unique(node_id)),
+    .groups = "drop") %>% 
+  ggplot() +
+  aes(x = time,
+      y = n_nodes,
+      color = tag_id) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(
+    ~ nest_id, 
+    scales = "free",
+    ncol = 1) +
+  daily_update_theme()
+```
+
+## Stdev rssi
+
+The hourly average standard deviation, by node, over the last two days:
+
+```{r, echo = FALSE, fig.asp = 1.5}
+detections_2_days %>% 
+  summarize(
+    sd_rssi = 
+      mean(
+        sd(rssi),
+        na.rm = TRUE),
+    .groups = "drop") %>% 
+  ggplot() +
+  aes(x = time,
+      y = sd_rssi,
+      color = tag_id) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(
+    ~ nest_id, 
+    scales = "free",
+    ncol = 1) +
+  daily_update_theme()
+```
+
+<hr>
+
+# Tag maps
+
+## 34616633
+
+```{r, include = FALSE}
+last_observation_34616633 <-
+  get_last_observation("34616633", time_window = "2 days") %>%
+  slice_max(time, n = 1)
+```
+
+The tag was last seen on `r  last_observation_34616633 %>% pull(time)` at node `r  last_observation_34616633 %>% pull(node_id)` with an rssi of `r  last_observation_34616633 %>% pull(rssi)`.
+
+```{r}
+map_last_time("34616633", time_window = "2 days")
+```
+
+<hr>
+
+## 072D782D
+
+```{r, include = FALSE}
+last_observation_072D782D <-
+  get_last_observation("072D782D", time_window = "2 days") %>%
+  slice_max(time, n = 1)
+```
+
+The tag was last seen on `r  last_observation_072D782D %>% pull(time)` at node `r  last_observation_072D782D %>% pull(node_id)` with an rssi of `r  last_observation_072D782D %>% pull(rssi)`.
+
+```{r}
+map_last_time("072D782D", time_window = "2 days")
+```
+
+<hr>
+
+## 1E552D19
+
+```{r, include = FALSE}
+last_observation_1E552D19 <-
+  get_last_observation("1E552D19", time_window = "1 minutes") %>%
+  slice_max(time, n = 1)
+```
+
+The tag was last seen on `r  last_observation_1E552D19 %>% pull(time)` at node `r  last_observation_1E552D19 %>% pull(node_id)` with an rssi of `r  last_observation_1E552D19 %>% pull(rssi)`.
+
+```{r}
+map_last_time("1E552D19", time_window = "4 minutes")
+```
+
+<hr>
+
+## 55526107
+
+```{r, include = FALSE}
+last_observation_55526107 <-
+  get_last_observation("55526107", time_window = "1 minutes") %>%
+  slice_max(time, n = 1)
+```
+
+The tag was last seen on `r  last_observation_55526107 %>% pull(time)` at node `r  last_observation_55526107 %>% pull(node_id)` with an rssi of `r  last_observation_55526107 %>% pull(rssi)`.
+
+
+```{r}
+map_last_time("55526107", time_window = "6 hours")
+```
