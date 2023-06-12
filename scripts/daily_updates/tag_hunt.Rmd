@@ -25,6 +25,8 @@ source("scripts/daily_updates/daily_updates_source.R")
 
 # Daily overview
 
+Stationarity (aka potential death) on the scale of a day can be found comparing the number of pings (detections), the number of nodes a tag was detected at, and the standard deviation of rssi values. When a tag is stationary, each of these values *should* be quite low.
+
 ```{r, include = FALSE}
 detections_by_day <-
   detections %>% 
@@ -111,6 +113,8 @@ detections_by_day %>%
 <hr>
 
 # The last 2 days, hourly
+
+Hourly detetinos can help find a tag that went stationary *during* a given day and help us pinpoint when.a tag went stationary. As above, look for low detections, number of nodes, and standard deviation values. Focus on situations where multiple adjacent values are low (just one or two may represent resting).
 
 *Note: To make things easier to interpret, I've subset these records to only observations between sunrise and sunset.*
 
@@ -220,7 +224,7 @@ detections_2_days %>%
 
 ```{r, include = FALSE}
 last_observation_34616633 <-
-  get_last_observation("34616633", time_window = "2 days") %>%
+  get_last_observation("34616633", time_window = "1 days") %>%
   slice_max(time, n = 1)
 ```
 
@@ -228,22 +232,6 @@ The tag was last seen on `r  last_observation_34616633 %>% pull(time)` at node `
 
 ```{r}
 map_last_time("34616633", time_window = "2 days")
-```
-
-<hr>
-
-## 072D782D
-
-```{r, include = FALSE}
-last_observation_072D782D <-
-  get_last_observation("072D782D", time_window = "2 days") %>%
-  slice_max(time, n = 1)
-```
-
-The tag was last seen on `r  last_observation_072D782D %>% pull(time)` at node `r  last_observation_072D782D %>% pull(node_id)` with an rssi of `r  last_observation_072D782D %>% pull(rssi)`.
-
-```{r}
-map_last_time("072D782D", time_window = "2 days")
 ```
 
 <hr>
