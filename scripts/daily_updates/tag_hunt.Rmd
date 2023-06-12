@@ -25,7 +25,7 @@ source("scripts/daily_updates/daily_updates_source.R")
 
 # Daily overview
 
-Stationarity (aka potential death) on the scale of a day can be found comparing the number of pings (detections), the number of nodes a tag was detected at, and the standard deviation of rssi values. When a tag is stationary, each of these values *should* be quite low.
+Stationarity (aka potential death) on the scale of a day can be found by exploring the number of pings (detections), the number of nodes a tag was detected at, and the standard deviation of rssi values. When a tag is stationary, each of these values *should* be quite low.
 
 ```{r, include = FALSE}
 detections_by_day <-
