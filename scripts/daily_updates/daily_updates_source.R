@@ -4,9 +4,7 @@ library(sf)
 library(tmap)
 library(tidyverse)
 
-# Run script to update the detections file:
-
-source("scripts/read_write_deployed.R")
+# !Important! Run read_write_deployed.R first!
 
 # For t-mapping:
 
@@ -109,12 +107,12 @@ get_last_observation <-
       # Get last time interval:
       
       mutate(
-        time = round_date(time, time_window)) %>% 
+        time_round = round_date(time, time_window)) %>% 
       
       # Grab the last hour of observations:
       
       filter(
-        time == max(time))
+        time_round == max(time_round))
   }
 
 

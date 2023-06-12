@@ -152,8 +152,8 @@ deployed_tags$tag_id %>%
 
 # When was a given tag last observed?
 
-get_last_observation("1E554B19", time_window = "1 hours")
+get_last_observation("34616633", time_window = "6 hours")
 
 # Where was a given tag in the last hour?
 
-map_last_time("55526107", time_window = "6 hours")
+map_last_time("34616633", time_window = "6 hours")
