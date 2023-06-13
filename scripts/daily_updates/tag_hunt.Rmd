@@ -1,11 +1,11 @@
 ---
-title: "Tag hunt"
+title: "Daily update"
 author: "Brian Evans"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
     toc: true
-    toc_depth: 2
+    toc_depth: 3
     toc_float:
       collapsed: true
       smooth_scroll: true
@@ -18,209 +18,220 @@ knitr::opts_chunk$set(
 ```
 
 ```{r, include = FALSE}
-source("scripts/daily_updates/daily_updates_source.R")
+source("scripts/daily_updates/web_update_source.R")
 ```
 
 <hr>
 
-# Daily overview
+# American Kestrel
+
+Here is a summary of yesterday's detections:
+
+```{r, echo = FALSE}
+pluck(yesterday_tables, "AMKE")
+```
+
+## Daily overview - AMKE 
 
 Stationarity (aka potential death) on the scale of a day can be found by exploring the number of pings (detections), the number of nodes a tag was detected at, and the standard deviation of rssi values. When a tag is stationary, each of these values *should* be quite low.
 
-```{r, include = FALSE}
-detections_by_day <-
-  detections %>% 
-  mutate(time = as_date(time)) %>% 
-  filter(time != today()) %>% 
-  group_by(
-    time,
-    nest_id,
-    tag_id)
+### Pings - AMKE
+
+The number of daily detections:
+
+```{r, echo = FALSE, fig.asp = 0.5}
+pluck(daily_pings, "AMKE")
 ```
 
+### Nodes - AMKE
 
-## Pings
+The number of nodes a tag was detected at per day:
+
+```{r, echo = FALSE, fig.asp = 0.5}
+pluck(daily_nodes, "AMKE")
+```
+
+### Stdev rssi - AMKE
+
+The average variance, by node, by day:
+
+```{r, echo = FALSE, fig.asp = 0.5}
+pluck(daily_sd, "AMKE")
+```
+
+<hr>
+
+## Yesterday, hourly - AMKE
+
+Hourly detections can help find a tag that went stationary *during* a given day and help us pinpoint when a tag went stationary. Look for low detections, number of nodes, and standard deviation values. Focus on situations where multiple adjacent values are low (just one or two may represent resting).
+
+*Note: To make things easier to interpret, I've subset these records to only observations between sunrise and sunset.*
+
+### Pings - AMKE
+
+The number of hourly detections:
+
+```{r, echo = FALSE, fig.asp = 0.5}
+pluck(hourly_pings, "AMKE")
+```
+
+### Nodes - AMKE
+
+The number of nodes that a tag was detected at, per hour:
+
+```{r, echo = FALSE, fig.asp = 0.5}
+pluck(hourly_nodes, "AMKE")
+```
+
+### Stdev rssi - AMKE
+
+The hourly average standard deviation, by node:
+
+```{r, echo = FALSE, fig.asp = 0.5}
+pluck(hourly_nodes, "AMKE")
+```
+
+# Bobolink
+
+Here is a summary of yesterday's detections:
+
+```{r, echo = FALSE}
+pluck(yesterday_tables, "BOBO")
+```
+
+## Daily overview - BOBO 
+
+Stationarity (aka potential death) on the scale of a day can be found by exploring the number of pings (detections), the number of nodes a tag was detected at, and the standard deviation of rssi values. When a tag is stationary, each of these values *should* be quite low.
+
+### Pings - BOBO
+
+The number of daily detections:
+
+```{r, echo = FALSE, fig.asp = 0.5}
+pluck(daily_pings, "BOBO")
+```
+
+### Nodes - BOBO
+
+The number of nodes a tag was detected at per day:
+
+```{r, echo = FALSE, fig.asp = 0.5}
+pluck(daily_nodes, "BOBO")
+```
+
+### Stdev rssi - BOBO
+
+The average variance, by node, by day:
+
+```{r, echo = FALSE, fig.asp = 0.5}
+pluck(daily_sd, "BOBO")
+```
+
+<hr>
+
+## Yesterday, hourly - BOBO
+
+Hourly detections can help find a tag that went stationary *during* a given day and help us pinpoint when a tag went stationary. Look for low detections, number of nodes, and standard deviation values. Focus on situations where multiple adjacent values are low (just one or two may represent resting).
+
+*Note: To make things easier to interpret, I've subset these records to only observations between sunrise and sunset.*
+
+### Pings - BOBO
+
+The number of hourly detections:
+
+```{r, echo = FALSE, fig.asp = 0.5}
+pluck(hourly_pings, "BOBO")
+```
+
+### Nodes - BOBO
+
+The number of nodes that a tag was detected at, per hour:
+
+```{r, echo = FALSE, fig.asp = 0.5}
+pluck(hourly_nodes, "BOBO")
+```
+
+### Stdev rssi - BOBO
+
+The hourly average standard deviation, by node:
+
+```{r, echo = FALSE, fig.asp = 0.5}
+pluck(hourly_nodes, "BOBO")
+```
+
+# Eastern meadowlark
+
+Here is a summary of yesterday's detections:
+
+```{r, echo = FALSE}
+pluck(yesterday_tables, "EAME")
+```
+
+## Daily overview - EAME 
+
+Stationarity (aka potential death) on the scale of a day can be found by exploring the number of pings (detections), the number of nodes a tag was detected at, and the standard deviation of rssi values. When a tag is stationary, each of these values *should* be quite low.
+
+### Pings - EAME
 
 The number of daily detections:
 
 ```{r, echo = FALSE, fig.asp = 1.5}
-detections_by_day %>% 
-  summarize(
-    n_pings = n(),
-    .groups = "drop") %>% 
-  ggplot() +
-  aes(x = time,
-      y = n_pings,
-      color = tag_id) +
-  geom_point() +
-  geom_line() +
-  facet_wrap(
-    ~ nest_id, 
-    scales = "free",
-    ncol = 1) +
-  daily_update_theme()
+pluck(daily_pings, "EAME")
 ```
 
-## Nodes
+### Nodes - EAME
 
 The number of nodes a tag was detected at per day:
 
 ```{r, echo = FALSE, fig.asp = 1.5}
-detections_by_day %>% 
-  summarize(
-    n_nodes = 
-      length(
-        unique(node_id)),
-    .groups = "drop") %>% 
-  ggplot() +
-  aes(x = time,
-      y = n_nodes,
-      color = tag_id) +
-  geom_point() +
-  geom_line() +
-  facet_wrap(
-    ~ nest_id, 
-    scales = "free",
-    ncol = 1) +
-  daily_update_theme()
+pluck(daily_nodes, "EAME")
 ```
 
-## Stdev rssi
+### Stdev rssi - EAME
 
 The average variance, by node, by day:
 
 ```{r, echo = FALSE, fig.asp = 1.5}
-detections_by_day %>% 
-  summarize(
-    sd_rssi = 
-      mean(
-        sd(rssi),
-        na.rm = TRUE),
-    .groups = "drop") %>% 
-  ggplot() +
-  aes(x = time,
-      y = sd_rssi,
-      color = tag_id) +
-  geom_point() +
-  geom_line() +
-  facet_wrap(
-    ~ nest_id, 
-    scales = "free",
-    ncol = 1) +
-  daily_update_theme()
+pluck(daily_sd, "EAME")
 ```
 
 <hr>
 
-# The last 2 days, hourly
+## Yesterday, hourly - EAME
 
-Hourly detetinos can help find a tag that went stationary *during* a given day and help us pinpoint when.a tag went stationary. As above, look for low detections, number of nodes, and standard deviation values. Focus on situations where multiple adjacent values are low (just one or two may represent resting).
+Hourly detections can help find a tag that went stationary *during* a given day and help us pinpoint when a tag went stationary. Look for low detections, number of nodes, and standard deviation values. Focus on situations where multiple adjacent values are low (just one or two may represent resting).
 
 *Note: To make things easier to interpret, I've subset these records to only observations between sunrise and sunset.*
 
-```{r, include = FALSE}
+### Pings - EAME
 
-detections_2_days <- 
-  detections %>% 
-  filter(time > today() - 2,
-         time < today()) %>% 
-  mutate(
-    date = as_date(time),
-    time = round_date(time, "1 hours")) %>% 
-  
-  # Subset to records between dawn and one hour before dusk:
-  
-  left_join(
-    dawn_dusk,
-    by = "date") %>% 
-  select(-date) %>%
-  filter(
-    between(time, dawn, dusk - 3600)) %>% 
-  
-  # Group data for summaries:
-  
-  group_by(
-    time,
-    nest_id,
-    tag_id)
-```
-
-## Pings
-
-The number of hourly detections over the last two days:
+The number of hourly detections:
 
 ```{r, echo = FALSE, fig.asp = 1.5}
-detections_2_days %>% 
-  summarize(
-    n_pings = n(),
-    .groups = "drop") %>% 
-  ggplot() +
-  aes(x = time,
-      y = n_pings,
-      color = tag_id) +
-  geom_point() +
-  geom_line() +
-  facet_wrap(
-    ~ nest_id, 
-    scales = "free",
-    ncol = 1) +
-  daily_update_theme()
+pluck(hourly_pings, "EAME")
 ```
 
-## Nodes
+### Nodes - EAME
 
-The number of nodes that a tag was detected at, per hour, over the last two days:
+The number of nodes that a tag was detected at, per hour:
 
 ```{r, echo = FALSE, fig.asp = 1.5}
-detections_2_days %>% 
-  summarize(
-    n_nodes = 
-      length(
-        unique(node_id)),
-    .groups = "drop") %>% 
-  ggplot() +
-  aes(x = time,
-      y = n_nodes,
-      color = tag_id) +
-  geom_point() +
-  geom_line() +
-  facet_wrap(
-    ~ nest_id, 
-    scales = "free",
-    ncol = 1) +
-  daily_update_theme()
+pluck(hourly_nodes, "EAME")
 ```
 
-## Stdev rssi
+### Stdev rssi - EAME
 
-The hourly average standard deviation, by node, over the last two days:
+The hourly average standard deviation, by node:
 
 ```{r, echo = FALSE, fig.asp = 1.5}
-detections_2_days %>% 
-  summarize(
-    sd_rssi = 
-      mean(
-        sd(rssi),
-        na.rm = TRUE),
-    .groups = "drop") %>% 
-  ggplot() +
-  aes(x = time,
-      y = sd_rssi,
-      color = tag_id) +
-  geom_point() +
-  geom_line() +
-  facet_wrap(
-    ~ nest_id, 
-    scales = "free",
-    ncol = 1) +
-  daily_update_theme()
+pluck(hourly_nodes, "EAME")
 ```
 
 <hr>
 
-# Tag maps
+## Tag maps - EAME
 
-## 34616633
+### 34616633 - EAME
 
 ```{r, include = FALSE}
 last_observation_34616633 <-
@@ -236,7 +247,7 @@ map_last_time("34616633", time_window = "2 days")
 
 <hr>
 
-## 1E552D19
+### 1E552D19 - EAME
 
 ```{r, include = FALSE}
 last_observation_1E552D19 <-
@@ -252,7 +263,7 @@ map_last_time("1E552D19", time_window = "4 minutes")
 
 <hr>
 
-## 55526107
+### 55526107 - EAME
 
 ```{r, include = FALSE}
 last_observation_55526107 <-
@@ -266,3 +277,4 @@ The tag was last seen on `r  last_observation_55526107 %>% pull(time)` at node `
 ```{r}
 map_last_time("55526107", time_window = "6 hours")
 ```
+
