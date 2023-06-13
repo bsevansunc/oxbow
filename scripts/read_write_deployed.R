@@ -286,5 +286,5 @@ read_csv("data/processed/deployed_detections_2023.csv") %>%
   write_csv("data/processed/deployed_detections_2023.csv")
 
 
-
+rm(list = ls())
 
